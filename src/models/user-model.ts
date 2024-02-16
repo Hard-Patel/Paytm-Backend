@@ -24,7 +24,8 @@ async function createUser(req: Request, res: Response) {
     }
 
     const hashPass = await hashPassword(password);
-    const randomBalance = Math.floor(Math.random() * 1000)
+    const randomBalance = Math.floor(Math.random() * 1000);
+    console.log("randomBalance: ", randomBalance, hashPass);
     const createdUser = await prisma.user.create({
       data: {
         email: email,
@@ -35,13 +36,19 @@ async function createUser(req: Request, res: Response) {
         Account: {
           create: {
             balance: randomBalance,
-          }
-        }
+          },
+        },
       },
     });
+    console.log("createdUser: ", createdUser);
 
-    return res.send({ msg: "User created successfully", data: createdUser });
+    return res.send({
+      msg: "User created successfully",
+      data: createdUser,
+      status: true,
+    });
   } catch (e) {
+    console.log("e: ", e);
     return res.status(500).send({ msg: "Something went wrong" });
   }
 }
@@ -61,12 +68,20 @@ async function loginUser(req: Request, res: Response) {
     where: {
       email: username,
     },
+    include: {
+      Account: {
+        select: {
+          balance: true,
+        },
+      },
+    },
   });
 
   const isAuthenticated = await comparePassword(
     password,
     foundUser?.password ?? ""
   );
+  console.log("isAuthenticated: ", isAuthenticated);
 
   if (isAuthenticated) {
     const { id, email, username, firstName, lastName } = foundUser ?? {};
@@ -76,6 +91,7 @@ async function loginUser(req: Request, res: Response) {
     return res.send({
       msg: "User logged-in successfully",
       data: { ...foundUser, token },
+      status: true,
     });
   }
   return res.send({ msg: "Invalid credentials or user does not exists" });
@@ -141,19 +157,29 @@ const updateUser = async (req: Request, res: Response) => {
 };
 
 const getUsers = async (req: Request, res: Response) => {
-  let { filter = "", page = 1, size = 5 } = req.query;
-  let skipper = +size * (+page > 0 ? +page - 1 : 0)
-  skipper = skipper > 0 ? skipper : 0;
-  const getUsers = await prisma.user.findMany({
-    where: { username: { contains: filter.toString(), mode: 'insensitive' } },
-    take: +size,
-    skip: skipper,
-  });
+  try {
+    const { user } = req.body;
+    let { filter = "", page = 1, size = 5 } = req.query;
+    let skipper = +size * (+page > 0 ? +page - 1 : 0);
+    skipper = skipper > 0 ? skipper : 0;
+    let getUsers = await prisma.user.findMany({
+      where: { username: { contains: filter.toString(), mode: "insensitive" } },
+      take: +size,
+      skip: skipper,
+    });
 
-  return res.json({
-    msg: "User fetched successfully",
-    data: getUsers,
-  });
+    getUsers = getUsers.filter((u) => u.id !== user.id);
+    return res.json({
+      msg: "User fetched successfully",
+      data: getUsers,
+      status: true,
+    });
+  } catch (e) {
+    console.log("e: ", e);
+    return res.status(500).json({
+      msg: "Something went wrong",
+    });
+  }
 };
 
 export { createUser, loginUser, updateUser, getUsers };

@@ -32,12 +32,12 @@ const transferFunds = async (req: Request, res: Response) => {
     return res.json({
       msg: "Amount transferred successfully",
       data: { balance: response.sender.balance },
+      status: true,
     });
   } catch (e) {
     if (e instanceof Error) {
       if (e.message == ErrorMessages.insufficientBalance) {
-        return res.status(417
-          ).send({ msg: ErrorMessages.insufficientBalance });
+        return res.status(417).send({ msg: ErrorMessages.insufficientBalance });
       }
     }
     return res.status(500).send({ msg: "Something went wrong" });

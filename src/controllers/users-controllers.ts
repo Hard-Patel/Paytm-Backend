@@ -7,7 +7,7 @@ import { authentication } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
-router.get(Routes.getUserRoute, getUsers);
+router.get(Routes.getUserRoute, [authentication], getUsers);
 router.post(Routes.addUserRoute, createUser);
 router.post(Routes.loginUserRoute, loginUser);
 router.patch(Routes.updateUserRoute, [authentication], updateUser);
