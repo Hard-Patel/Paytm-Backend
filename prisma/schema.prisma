@@ -21,5 +21,5 @@ model Account {
   account_id Int  @id @default(autoincrement())
   user_id    Int  @unique
   balance    Float
-  User       User @relation(fields: [user_id], references: [id])
+  User       User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }

@@ -1,46 +1,25 @@
-import { Request, Response } from "express";
 import { prisma } from "../database/db-provider";
-import { transferFundsSchema } from "../validators/account-validator";
 import { transfer } from "../helpers/account-helper";
-import { transferAmount } from "../interfaces/account-interface";
-import { ErrorMessages } from "../utils/constants";
+import { transferAmount, transferFundsProps } from "../interfaces/account-interface";
 
-const getAccountBalance = async (req: Request, res: Response) => {
-  let { user } = req.body;
-
-  const getBalance = await prisma.account.findUnique({
-    where: { user_id: user.id },
-  });
-
-  return res.json({
-    msg: "User account balance fetched successfully",
-    data: { balance: getBalance?.balance ?? 0 },
-  });
+const getAccountBalance = async (id: number) => {
+  try {
+    const getBalance = await prisma.account.findUnique({
+      where: { user_id: id },
+    });
+    return getBalance;
+  } catch (e) {
+    throw new Error((e as Error).message);
+  }
 };
 
-const transferFunds = async (req: Request, res: Response) => {
-  const { to, fund, user } = req.body;
-  const parsed = transferFundsSchema.safeParse({ fund, to });
-  if (!parsed.success) {
-    return res
-      .status(400)
-      .json({ msg: "Invalid request", error: parsed.error });
-  }
+const transferFunds = async ({to, fund, from}: transferFundsProps) => {
   try {
-    const response: transferAmount = await transfer(user.id, to, fund);
-
-    return res.json({
-      msg: "Amount transferred successfully",
-      data: { balance: response.sender.balance },
-      status: true,
-    });
+    const response: transferAmount = await transfer(from, to, fund);
+    return response;
   } catch (e) {
-    if (e instanceof Error) {
-      if (e.message == ErrorMessages.insufficientBalance) {
-        return res.status(417).send({ msg: ErrorMessages.insufficientBalance });
-      }
-    }
-    return res.status(500).send({ msg: "Something went wrong" });
+    console.log('e: ', e);
+    throw new Error((e as Error).message);
   }
 };
 

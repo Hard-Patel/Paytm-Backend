@@ -1,11 +1,11 @@
 import express from "express";
-import { usersController } from "../controllers/users-controllers";
 import { Routes } from "../utils/constants";
-import { accountController } from "../controllers/account-controller";
+import { userRouter } from "./user-routes";
+import { accountRouter } from "./account-routes";
 
 const router = express.Router();
 
-router.use(Routes.usersRoute, usersController);
-router.use(Routes.accountRoutes, accountController);
+router.use(Routes.usersRoute, userRouter);
+router.use(Routes.accountRoutes, accountRouter);
 
 export { router as v1Controller };

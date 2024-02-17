@@ -13,9 +13,11 @@ export const Routes = {
   // Account API Routes
   accountRoutes: "/account",
   checkAccountBalance: "/balance",
-  transferFunds: '/transfer',
+  transferFunds: "/transfer",
 };
 
 export const ErrorMessages = {
-  insufficientBalance: "Insufficient Balance"
-}
+  insufficientBalance: "Insufficient Balance",
+  userAlreadyExists: "User already exists",
+  invalidCredentials: "Invalid credentials",
+};
