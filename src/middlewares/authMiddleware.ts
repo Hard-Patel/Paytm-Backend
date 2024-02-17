@@ -29,6 +29,7 @@ export const authentication = async (
     next();
     
   } catch (err) {
+    console.log('err: ', err);
     return res.status(403).json({msg: "Invalid authentication token"});
   }
 };
