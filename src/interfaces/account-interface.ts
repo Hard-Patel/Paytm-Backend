@@ -8,3 +8,9 @@ export interface accountInfo {
     user_id: number,
     balance: number,
 }
+
+export interface transferFundsProps {
+    from: number;
+    to: number;
+    fund: number;
+}
