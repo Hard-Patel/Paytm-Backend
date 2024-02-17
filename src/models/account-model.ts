@@ -9,7 +9,7 @@ const getAccountBalance = async (req: Request, res: Response) => {
   let { user } = req.body;
 
   const getBalance = await prisma.account.findUnique({
-    where: { account_id: user.id },
+    where: { user_id: user.id },
   });
 
   return res.json({

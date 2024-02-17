@@ -14,7 +14,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Account" (
     "account_id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "balance" INTEGER NOT NULL,
+    "balance" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "Account_pkey" PRIMARY KEY ("account_id")
 );

@@ -12,7 +12,7 @@ function transfer(from: number, to: number, amount: number): Promise<transferAmo
         },
       },
       where: {
-        account_id: from,
+        user_id: from,
       },
     });
 
@@ -29,7 +29,7 @@ function transfer(from: number, to: number, amount: number): Promise<transferAmo
         },
       },
       where: {
-        account_id: to,
+        user_id: to,
       },
     });
 
